@@ -11,10 +11,19 @@
     
 -----------------------
 ### node bamazonManager.js
-* Display menu
+* As default, manager will see menu
   * View Products for Sale
   * View Low Inventory
   * Add to Inventory
   * Add New Product
-** VIEW **
+**1.VIEW**
 ![alt text](https://github.com/spjw99/bamazon/blob/master/screen_shot/bamazonManager_view.JPG)
+**2.ADD**
+![alt text](https://github.com/spjw99/bamazon/blob/master/screen_shot/bamazonManager_add.JPG)
+
+-----------------------
+### node bamazonSupervisor.js
+* As default, Supervisor will see menu
+  * View Product Sales by Department
+  * Create New Department
+![alt text](https://github.com/spjw99/bamazon/blob/master/screen_shot/bamazonSupervisor.JPG)
