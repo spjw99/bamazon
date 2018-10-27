@@ -25,7 +25,12 @@ function display(){
             'Stock Quantity'
         ]
     });
-    connection.query("SELECT item_id, product_name, department_name, price, stock_quantity FROM products ORDER BY department_name ASC", function(err, result){
+    let qry = "SELECT p.item_id, p.product_name, p.department_id, d.department_name, p.price, p.stock_quantity ";
+    qry += "FROM products AS p ";
+    qry += "LEFT JOIN departments AS d ";
+    qry += "ON p.department_id = d.department_id ";
+    qry += "ORDER BY item_id ASC";
+    connection.query(qry, function(err, result){
         if(err){
             console.log(err);
             //return res.status(500).end();
@@ -33,7 +38,7 @@ function display(){
         //console.log(result);
         if(result){
             for(let i = 0; i < result.length; i++){
-                table.push([result[i].item_id, result[i].product_name, result[i].department_name, result[i].price, result[i].stock_quantity]);
+                table.push([result[i].item_id, result[i].product_name, result[i].department_name, "$" + result[i].price, result[i].stock_quantity]);
             }
         }
         console.log(table.toString());
@@ -62,6 +67,7 @@ function purchase_prompt(products){
 
         //selected product info
         const selected_product_info = products[parseInt(item_id) - 1];
+        const selected_department_id = selected_product_info.department_id;
         const selected_product_id = selected_product_info.item_id;
         const selected_product_price = selected_product_info.price;
         const selected_product_stock_quantity = selected_product_info.stock_quantity;
@@ -77,9 +83,29 @@ function purchase_prompt(products){
                     //return res.status(500).end();
                 }
             })
-            console.log("Thank you for the order. Your total is $" +  total_price.toFixed(2) + ".");
+            console.log(`
+            
+            [Thank you for the order. Your total is $${total_price.toFixed(2)}.]
+            
+            `);
+            connection.query("SELECT product_sales FROM departments WHERE department_id=" +  selected_department_id, function(err, result){
+                if(err){
+                    console.log(err);
+                }
+                const previous_product_sales = result[0].product_sales;
+                connection.query("UPDATE departments SET ? WHERE ?", [{product_sales: (parseFloat(previous_product_sales) + parseFloat(total_price)).toFixed(2)}, {department_id: selected_department_id}], function(err, result){
+                    if(err){
+                        console.log(err);
+                        //return res.status(500).end();
+                    }
+                })
+            })
         }else{//insufficient
-            console.log("Insufficient quantity!");
+            console.log(`
+            
+            [Insufficient quantity!]
+            
+            `);
         }
         display();
     })
